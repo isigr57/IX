@@ -14,7 +14,7 @@ server.bind((IP_address, Port))
 server.listen(4096)
 list_of_clients = []
 table_ONTS_in={}
-pre_table_ONTS={}
+table_ant={}
 table_ONTS_out=[]
 
 def print_table(table):
@@ -35,11 +35,21 @@ def clientthread(conn, addr):
                 continue
 
 def serverupdatetread():
+    global table_ONTS_in
     while True:
-        os.system("clear")
         time.sleep(0.000125)
         if bool(table_ONTS_in):
-            print_table(DBA(table_ONTS_in))
+            table_ONTS_in={k: v for k, v in sorted(table_ONTS_in.items(), key=lambda item: item[1])}
+            if table_ONTS_in!=table_ant:
+                os.system("clear")
+                print_table(DBA(table_ONTS_in))
+        else:
+            os.system("clear")
+            print("SEARCHING FOR ONTS....REFRESHIG")
+            time.sleep(1)
+
+
+
 
 def broadcast(message, connection):
     for clients in list_of_clients:
@@ -53,15 +63,19 @@ def broadcast(message, connection):
 def remove(connection):
     if connection in list_of_clients:
         list_of_clients.remove(connection)
+        table_ONTS_in.clear()
 
 
 def DBA(table_in):
-    pre_table_ONTS=table_in
+    allocid=0
+    global table_ant
     table_out=[]
+    table_ant=table_in.copy()
+    table_out.append(['Id ONT','Bandwith in MB/s','Priority', 'Alloc-ID'])
     for key in table_in.keys():
-        temp = [key,table_in[key][0],table_in[key][1]]
-        #print(temp)
+        temp = [key,table_in[key][0],table_in[key][1],allocid]
         table_out.append(temp)
+        allocid=allocid+1
     return table_out
 
 

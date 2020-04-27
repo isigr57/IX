@@ -1,9 +1,8 @@
 import socket
 import pickle
 import select
-import time
 import sys
-import random
+import os
 
 
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -15,6 +14,9 @@ id=input("ID for the new ONT: ")
 bandwith=input("BANDWITH for the new ONT: ")
 priority=input("PRIORITY for the new ONT: ")
 trama_up.update({id : [bandwith, priority]})
+os.system("clear")
+print("Information: ID= "+id+" | Bandwith= "+bandwith+" | Priority= "+priority)
+print("ENTER TO STAR THE SYSTEM.....")
 
 while True:
     sockets_list = [sys.stdin, server]
@@ -24,9 +26,5 @@ while True:
             message = socks.recv(4096)
             print(message)
         else:
-            for i in range(0, random.randint(0, 1000)):
-                server.send(pickle.dumps(trama_up))
-                print("send"+str(trama_up))
-                time.sleep(0.000125)
-            time.sleep(random.randint(0, 10))
+            server.send(pickle.dumps(trama_up))
 server.close()
