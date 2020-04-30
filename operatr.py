@@ -1,4 +1,4 @@
-# Python program to implement server side of chat room.
+# IX GPON SIMULATOR.
 import socket
 import pickle
 import _thread
@@ -14,15 +14,14 @@ server.bind((IP_address, Port))
 server.listen(4096)
 list_of_clients = []
 table_ONTS_in={}
-table_ant={}
 table_ONTS_out=[]
+max_cap = 2480
 
 def print_table(table):
     out=AsciiTable(table)
     print(out.table)
 
 def clientthread(conn, addr):
-    #conn.send("Welcome to ONT service")
     while True:
             try:
                 message = conn.recv(4096)
@@ -35,14 +34,16 @@ def clientthread(conn, addr):
                 continue
 
 def serverupdatetread():
+    refresh = '0'
     global table_ONTS_in
     while True:
-        time.sleep(0.000125)
         if bool(table_ONTS_in):
-            table_ONTS_in={k: v for k, v in sorted(table_ONTS_in.items(), key=lambda item: item[1])}
-            if table_ONTS_in!=table_ant:
-                os.system("clear")
-                print_table(DBA(table_ONTS_in))
+            os.system("clear")
+            print_table(DBA(table_ONTS_in))
+            refresh=input("Enter 'R' for refreshing: ")
+            while refresh not in ('r','R'):
+                refresh=input("Enter 'R' for refreshing: ")
+            table_ONTS_in.clear()
         else:
             os.system("clear")
             print("SEARCHING FOR ONTS....REFRESHIG")
@@ -63,29 +64,28 @@ def broadcast(message, connection):
 def remove(connection):
     if connection in list_of_clients:
         list_of_clients.remove(connection)
-        table_ONTS_in.clear()
 
 
 def DBA(table_in):
-    allocid=0
-    global table_ant
+    priority_con=[0,0,0,0]
+    acumband=[0,0,0,0]
+    allocid=1000
+    global max_cap
     table_out=[]
-    table_ant=table_in.copy()
-    table_out.append(['Id ONT','Bandwith in MB/s','Priority', 'Alloc-ID'])
+    table_in={k: v for k, v in sorted(table_in.items(), key=lambda item: item[1])}
+    table_out.append(['Id ONT','Bandwith in MB/s','Priority', 'Alloc-ID', 'Assigned Bandwith'])
     for key in table_in.keys():
-        temp = [key,table_in[key][0],table_in[key][1],allocid]
-        table_out.append(temp)
-        allocid=allocid+1
+        priority_con[int(key[0])-1]=priority_con[int(key[0])-1]+1
+        priority_con[int(key[0])-1]=priority_con[int(key[0])-1]+int(key.value[1])
     return table_out
 
 
 
-
+max_cap = input("Enter Gran Map Size [0-2480] (MB/s) or leave blank for default 2480: ")
 _thread.start_new_thread(serverupdatetread,())
 while True:
     conn, addr = server.accept()
     list_of_clients.append(conn)
-    print(addr[0] + " connected")
     _thread.start_new_thread(clientthread,(conn,addr))
 
 conn.close()
