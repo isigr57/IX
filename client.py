@@ -5,6 +5,8 @@ import sys
 import os
 import random
 import string
+import _thread
+
 
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 IP_address = "localhost"
@@ -17,15 +19,39 @@ priority=input("PRIORITY for the new ONT or blank for randon [0-4]: ") or str(ra
 id_OLTStandard=priority+bandwith+id;
 trama_up.update({id_OLTStandard : [id, bandwith, priority]})
 os.system("clear")
+
+def sendtramas():
+    while True:
+        sockets_list = [sys.stdin, server]
+        read_sockets,write_socket, error_socket = select.select(sockets_list,[],[])
+        for socks in read_sockets:
+            if socks != server:
+                server.send(pickle.dumps(trama_up))
+
 print("Information: ID = "+id+" | Bandwith = "+bandwith+" | Priority = "+priority)
-print("ENTER TO START THE SYSTEM.....")
+print("ENTER TO CONFIRM DATA.....")
+_thread.start_new_thread(sendtramas,())
+
 while True:
     sockets_list = [sys.stdin, server]
     read_sockets,write_socket, error_socket = select.select(sockets_list,[],[])
     for socks in read_sockets:
         if socks == server:
-            message = socks.recv(4096)
-            print(message)
-        else:
-            server.send(pickle.dumps(trama_up))
+            message = socks.recv(1500)
+            response=pickle.loads(message)
+            if any(id in s for s in response):
+                for item in response:
+                    if item[0]==id:
+                        os.system("clear")
+                        print("\n\nInformation: ID = "+id+" | Bandwith = "+bandwith+" | Priority = "+priority)
+                        print("-------------------------------------------------------------------------")
+                        print("ONT is allocated on Alloc-ID: "+ str(item[3]))
+                        print("Assigned Bandwith for the ONT : "+str(item[4])+" MB/s")
+                        print("-------------------------------------------------------------------------\n\n")
+            else:
+                os.system("clear")
+                print("\n\nInformation: ID = "+id+" | Bandwith = "+bandwith+" | Priority = "+priority)
+                print("-------------------------------------------------------------------------")
+                print("ONT is NOT allocated")
+                print("-------------------------------------------------------------------------\n\n")
 server.close()

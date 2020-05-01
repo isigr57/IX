@@ -12,10 +12,11 @@ server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 IP_address = "localhost"
 Port = 5001
 server.bind((IP_address, Port))
-server.listen(4096)
+server.listen(1500)
 list_of_clients = []
 table_ONTS_in={}
 table_ONTS_error=[]
+table_DBA=[]
 
 def print_table(table):
     out=AsciiTable(table)
@@ -24,10 +25,9 @@ def print_table(table):
 def clientthread(conn, addr):
     while True:
             try:
-                message = conn.recv(4096)
+                message = conn.recv(1500)
                 if message:
-                    ONT = pickle.loads(message);
-                    table_ONTS_in.update(ONT)
+                    table_ONTS_in.update(pickle.loads(message))
                 else:
                     remove(conn)
             except:
@@ -39,10 +39,13 @@ def serverupdatetread():
     while True:
         if bool(table_ONTS_in):
             os.system("clear")
+            table_DBA=DBA(table_ONTS_in)
             print("\n\n----ALLOCATED TABLE----\n\n")
-            print_table(DBA(table_ONTS_in))
+            print_table(table_DBA)
+            broadcast(pickle.dumps(table_DBA))
             print("\n\n----ERROR TABLE----\n\n")
             print_table(table_ONTS_error)
+            #time.sleep(5)
             refresh=input("Enter 'R' for refreshing output: ")
             while refresh not in ('r','R'):
                 refresh=input("Enter 'R' for refreshing output: ")
@@ -52,17 +55,13 @@ def serverupdatetread():
             print("SEARCHING FOR ONTS....REFRESHIG")
             time.sleep(1)
 
-
-
-
-def broadcast(message, connection):
+def broadcast(message):
     for clients in list_of_clients:
-        if clients!=connection:
-            try:
-                clients.send(message)
-            except:
-                clients.close()
-                remove(clients)
+        try:
+            clients.send(message)
+        except:
+            clients.close()
+            remove(clients)
 
 def remove(connection):
     if connection in list_of_clients:
@@ -75,12 +74,12 @@ def DBA(table_in):
     allocid=1000
     global max_cap
     global table_ONTS_error
-    table_ONTS_error=[['Id ONT','Bandwith in MB/s','Priority', 'Alloc-ID', 'Assigned Bandwith']]
+    table_ONTS_error=[['Id ONT','Bandwith in MB/s','Priority', 'Alloc-ID', 'Assigned Bandwith in MB/s']]
     restant = max_cap
     table_out=[]
     table_in=collections.OrderedDict(sorted(table_in.items()))
-    print(table_in)
-    table_out.append(['Id ONT','Bandwith in MB/s','Priority', 'Alloc-ID', 'Assigned Bandwith'])
+    #print(table_in)
+    table_out.append(['Id ONT','Bandwith in MB/s','Priority', 'Alloc-ID', 'Assigned Bandwith in MB/s'])
     for key in table_in.keys():
         pr[int(key[0])-1]=pr[int(key[0])-1]+1
         bd[int(key[0])-1]=bd[int(key[0])-1]+int(table_in[key][1])
@@ -111,8 +110,9 @@ def DBA(table_in):
         for key in selectedkeys:
             if key in table_in:
                 del table_in[key]
-    #print(pr)
-    #print(bd)
+    print("\n\n----BANDWITH TABLE----\n\n")
+    recursos=[['Bandwith in MB/s', 'Free Bandwith in MB/s', 'Assigned Bandwith in MB/s'],[max_cap,restant,max_cap-restant]]
+    print_table(recursos)
     return table_out
 
 
