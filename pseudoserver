@@ -1,0 +1,31 @@
+Pregunta mida del gran map o assigna 2480 Mbps per defecte
+
+Thread actualització DBA:
+  Per tota l'execució:
+    Si la taula de tramas no esta buida:
+      Neteja la pantalla
+      Executa algorime DBA
+      Mostra la taula amb les assignacions
+      Envia la taula dassignacions a totes les ONTS
+      Mostra taula d'errors
+      espera 5 s (ja que si feiem cada 125us no s'arribava a veure la taula)
+      Neteja la taula de tramas
+    Si esta buida:
+      Neteja la pantalla
+      Imprimeix que s'estan buscant ONTS
+      espera 1 s
+
+Thread Principal:
+  Per tota l'execució:
+    Si tenim una conexió l'acceptem
+    La incloim a la llista de clients
+    Thread per clients:
+      Per tota l'execucio:
+        Si el client envia trama:
+          Guarda trama a la taula de tramas
+        Sino:
+          Tanca la connexio
+        Si hi ha una execpio:
+          continua
+Tancar connexio
+Tancar servidor

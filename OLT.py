@@ -46,9 +46,7 @@ def serverupdatetread():
             print("\n\n----ERROR TABLE----\n\n")
             print_table(table_ONTS_error)
             #time.sleep(5)
-            refresh=input("Enter 'R' for refreshing output: ")
-            while refresh not in ('r','R'):
-                refresh=input("Enter 'R' for refreshing output: ")
+        
             table_ONTS_in.clear()
         else:
             os.system("clear")

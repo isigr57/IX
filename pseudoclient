@@ -1,0 +1,23 @@
+Pregunta id o l'assigna automaticament
+Pregunta ample de banda o l'assigna automaticament
+Pregunta prioritat o l'assigna automaticament
+
+crea la trama formada per un vector que conte les 3 caracteristiques solicitades
+
+Thread Sendtramas:
+  Durant tota la execucio:
+    Envia trama formatexada al servidor
+
+Thread Principal:
+  Durant tota l'execució:
+    Comprova si hi ha missatge entrant:
+      Converteix format de trama
+      Guarda trama en Variable
+      Si el id existeix en la resposta que prove de la OLT:
+        Neteja la pantalla
+        Imprimeix la id més la info del sistema
+      Sino hi ha el id en la resposta
+        Neteja la pantalla
+        Inprimeix la info del sistema i digues que no te slot assignat
+
+Tanca la connexio

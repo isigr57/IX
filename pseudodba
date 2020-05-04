@@ -1,0 +1,36 @@
+Declarem un vector per les prioritats on contarem quantes demandes te cada prioritat
+Declarem un vector per guardar el cabal acumulat per prioritats
+Ordena les trames per prioritats
+
+Asignem el cabal total
+
+Per cada trama:
+  fes +1 a la prioritat que toca
+  suma el bandwith a la prioritat corresponent
+
+Per cada prioritat:
+  si no queda cabal:
+    defineix factor igual -1
+  si el cabal restant es mes petit que el solicitat per prioritat:
+    factor es igual a restantant dividit pel solicitat
+  sino es cap dels dos:
+    factor igual a 1
+
+  per cada trama:
+    si la iteració es igual al num de demandes en prioritat:
+      surt del bucle
+    si el factor es igual -1:
+      afegir trama a la taula de error bandwith assignat 0 i no allocation id
+    Sino:
+      afegim a la taula afegim el bandwith multiplicat pel factor i agreguem allocation id
+    guardar key en vector
+    allocation id mes un
+    si cabal restant es < 0
+     cabal restanat igual 0
+    sumem 1 a la iteracio
+per totes les tramas en el vector:
+  si la trama esta a la taula de tramas:
+    eliminar trama
+
+Imprimir taula de recursos restants
+retornar taula de assignacions
