@@ -15,7 +15,7 @@ server.connect((IP_address, Port))
 trama_up={}
 id=input("ID for the new ONT or leave blank for autogenerate: ") or ''.join([random.choice(string.ascii_letters + string.digits) for n in range(16)])
 bandwith=input("BANDWITH in MB/s for the new ONT or blank for random [0-2480]: ") or str(random.randint(0,2480))
-priority=input("PRIORITY for the new ONT or blank for randon [0-4]: ") or str(random.randint(1,4))
+priority=input("PRIORITY for the new ONT or blank for randon [1-4]: ") or str(random.randint(1,4))
 id_OLTStandard=priority+bandwith+id;
 trama_up.update({id_OLTStandard : [id, bandwith, priority]})
 os.system("clear")

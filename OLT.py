@@ -34,7 +34,7 @@ def clientthread(conn, addr):
                 continue
 
 def serverupdatetread():
-    refresh = '0'
+    #refresh = '0'
     global table_ONTS_in
     while True:
         if bool(table_ONTS_in):
@@ -45,8 +45,10 @@ def serverupdatetread():
             broadcast(pickle.dumps(table_DBA))
             print("\n\n----ERROR TABLE----\n\n")
             print_table(table_ONTS_error)
-            #time.sleep(5)
-        
+            time.sleep(5)
+            #refresh=input("Enter 'R' for refreshing output: ")
+            #while refresh not in ('r','R'):
+                #refresh=input("Enter 'R' for refreshing output: ")
             table_ONTS_in.clear()
         else:
             os.system("clear")
@@ -102,7 +104,7 @@ def DBA(table_in):
                 restant=restant-(int(table_in[key][1])*factor)
             selectedkeys.append(key)
             allocid=allocid+1
-            if restant<0:
+            if restant<=0:
                 restant=0
             iter=iter+1
         for key in selectedkeys:
